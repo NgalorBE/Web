@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<meta charset="UTF-8">
+<title>RUCUP SIGNAL TRADE</title>
+
+<style>
+
+html,body{
+overflow-x:hidden;
+max-width:100%;
+}
+
+body{
+background:#020617;
+color:#e2e8f0;
+font-family:monospace;
+margin:0 auto;
+max-width:480px;
+}
+
+body.lockScroll{
+overflow:hidden;
+height:100vh;
+touch-action:none;
+}
+
+.header{
+
+display:flex;
+align-items:center;
+justify-content:space-between;
+
+padding:16px;
+gap:6px;
+
+font-size:20px;
+font-weight:bold;
+
+animation:neonRGB 3s infinite ease-in-out;
+
+/* PANEL HEADER BACKGROUND */
+
+position:relative;
+overflow:hidden;
+
+background:
+
+linear-gradient(
+to bottom,
+#020617 0%,
+#020617 60%,
+#0f172a 100%
+);
+
+border-bottom:
+
+1px solid rgba(255,255,255,.08);
+
+box-shadow:
+
+0 4px 20px rgba(0,0,0,.6);
+
+}
+
+.header::after{
+
+content:"";
+
+position:absolute;
+
+top:0;
+left:0;
+
+width:100%;
+height:100%;
+
+background:
+
+radial-gradient(
+circle at center,
+rgba(255,255,255,.05),
+transparent 70%
+);
+
+pointer-events:none;
+
+animation:headerGlow 6s ease-in-out infinite alternate;
+
+}
+
+@keyframes headerGlow{
+
+0%{
+
+opacity:.2;
+transform:scale(1);
+
+}
+
+100%{
+
+opacity:.5;
+transform:scale(1.05);
+
+}
+
+}
+
+.header::before{
+
+content:"";
+
+position:absolute;
+
+top:0;
+left:0;
+
+width:100%;
+height:100%;
+
+background-image:
+
+repeating-linear-gradient(
+45deg,
+rgba(34,197,94,.3) 0px,
+rgba(34,197,94,.1) 6px,
+transparent 29px,
+transparent 38px
+),
+
+repeating-linear-gradient(
+-45deg,
+rgba(239,68,68,.3) 0px,
+rgba(239,68,68,.1) 6px,
+transparent 29px,
+transparent 38px
+);
+
+animation:candleMove 8s linear infinite;
+
+pointer-events:none;
+
+}
+
+@keyframes candleMove{
+
+0%{
+
+background-position:0 0, 0 0;
+
+}
+
+100%{
+
+background-position:360px 0, -360px 0;
+
+}
+
+}
+
+.title{
+flex:1;
+text-align:center;
+position:relative;
+}
+
+.aboutBtn{
+width:38px;
+height:49px;
+position:relative;
+border-radius:6px 10px 10px 6px;
+background:transparent;
+border:2px solid #ffffff;
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+box-shadow:
+0 0 6px rgba(255,255,255,.6),
+0 0 14px rgba(255,255,255,.3);
+transition:.2s;
+}
+
+.aboutBtn::before{
+content:"";
+position:absolute;
+left:6px;
+top:6px;
+bottom:6px;
+width:4px;
+background:rgba(255,255,255,.25);
+border-radius:2px;
+box-shadow:0 0 4px rgba(255,255,255,.2);
+transition:.2s;
+}
+
+.aboutBtn::after{
+
+content:"";
+
+position:absolute;
+
+right:6px;
+
+top:-3px;
+
+width:10px;
+
+height:20px;
+
+background:rgba(255,255,255,.85);
+
+clip-path:polygon(
+0 0,
+100% 0,
+100% 70%,
+50% 100%,
+0 70%
+);
+
+box-shadow:
+0 0 3px rgba(255,255,255,.4);
+
+transition:.2s;
+
+}
+
+.paperIcon{
+fill:#ffffff;
+transition:.2s;
+}
+
+.aboutBtn.active{
+background:#ffffff;
+border-color:#020617;
+}
+
+.aboutBtn.active::before{
+background:#020617;
+box-shadow:none;
+}
+
+.aboutBtn.active::after{
+background:#020617;
+box-shadow:none;
+}
+
+.aboutBtn.active .paperIcon{
+fill:#020617;
+}
+
+@media (hover:hover){
+
+.aboutBtn:hover{
+
+background:#ffffff;
+color:#020617;
+box-shadow:0 0 4px #ffffff;
+
+}
+
+}
+.bookText{
+
+font-size:11px;
+
+font-weight:bold;
+
+letter-spacing:1px;
+
+color:#ffffff;
+
+text-shadow:
+0 0 4px rgba(255,255,255,.6);
+
+transition:.2s;
+
+}
+.aboutBtn.active .bookText{
+
+color:#020617;
+
+text-shadow:none;
+
+}
+/* WHITE → GREEN → RED LOOP */
+
+@keyframes neonRGB{
+
+/* START SLOW GREEN */
+
+0%{
+
+color:#22c55e;
+
+text-shadow:
+0 0 6px #22c55e,
+0 0 14px #22c55e;
+
+opacity:.4;
+
+}
+
+
+/* SLOW TRANSITION TO RED */
+
+25%{
+
+color:#ef4444;
+
+text-shadow:
+0 0 6px #ef4444,
+0 0 14px #ef4444;
+
+opacity:.2;
+
+}
+
+/* FAST FLASH MODE START */
+
+40%{
+
+color:#22c55e;
+
+text-shadow:
+0 0 10px #22c55e,
+0 0 20px #22c55e;
+
+opacity:1;
+
+}
+
+
+50%{
+
+color:#ef4444;
+
+text-shadow:
+0 0 10px #ef4444,
+0 0 20px #ef4444;
+
+opacity:1;
+
+}
+
+
+60%{
+
+color:#22c55e;
+
+text-shadow:
+0 0 10px #22c55e,
+0 0 20px #22c55e;
+
+opacity:1;
+
+}
+
+
+70%{
+
+color:#ef4444;
+
+text-shadow:
+0 0 10px #ef4444,
+0 0 20px #ef4444;
+
+opacity:1;
+
+}
+
+85%{
+color:#22c55e;
+text-shadow:
+0 0 6px #22c55e,
+0 0 14px #22c55e;
+opacity:.2;
+}
+
+100%{
+color:#ef4444;
+text-shadow:
+0 0 6px #ef4444,
+0 0 14px #ef4444;
+opacity:.4;
+}
+}
+
+.logo{
+position:relative;
+margin-right:auto;
+width:54px;
+height:54px;
+border-radius:8px;
+background:#1e293b;
+display:flex;
+align-items:center;
+justify-content:center;
+overflow:hidden;
+}
+
+.logoImg{
+width:100%;
+height:100%;
+object-fit:cover;
+user-select:none;
+-webkit-user-drag:none;
+pointer-events:none;
+}
+
+.logoBlock{
+position:absolute;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:transparent;
+z-index:5;
+}
+
+.loginMode .title{
+text-align:left;
+margin-left:10px;
+}
+.scanline{
+
+height:2px;
+
+width:100%;
+
+background:
+
+linear-gradient(
+90deg,
+transparent,
+#ffffff,
+transparent
+);
+
+animation:scanMove 2s linear infinite;
+
+}
+
+@keyframes scanMove{
+
+0%{
+
+transform:translateX(-100%);
+
+}
+
+100%{
+
+transform:translateX(100%);
+
+}
+
+}
+
+.panel{
+background:#0f172a;
+padding:12px;
+margin:10px;
+border-radius:14px;
+box-shadow:0 0 100px rgba(0,0,0,.5);
+}
+
+.signalBox{
+font-size:36px;
+font-weight:bold;
+margin-top:10px;
+}
+
+.buy{
+color:#22c55e;
+text-shadow:0 0 10px #22c55e;
+}
+
+.sell{
+color:#ef4444;
+text-shadow:0 0 10px #ef4444;
+}
+
+button{
+
+width:100%;
+
+padding:14px;
+
+margin-top:10px;
+
+border-radius:12px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+transition:.15s ease;
+
+background:transparent;
+
+letter-spacing:1px;
+
+}
+
+/* efek klik sekali tekan */
+
+button:active{
+
+transform:scale(.96);
+
+color:#020617;
+
+}
+
+.generate{
+
+color:#22c55e;
+
+border:2px solid #22c55e;
+
+background:transparent;
+
+box-shadow:
+
+0 0 6px rgba(34,197,94,.4),
+
+inset 0 0 6px rgba(34,197,94,.2);
+
+}
+
+.generate:active{
+
+background:#22c55e;
+
+border-color:#22c55e;
+
+box-shadow:
+
+0 0 14px rgba(34,197,94,.8),
+
+inset 0 0 10px rgba(34,197,94,.6);
+
+}
+.sync{
+
+color:#ef4444;
+
+border:2px solid #ef4444;
+
+background:transparent;
+
+box-shadow:
+
+0 0 6px rgba(239,68,68,.4),
+
+inset 0 0 6px rgba(239,68,68,.2);
+
+}
+
+.sync:active{
+
+background:#ef4444;
+
+border-color:#ef4444;
+
+box-shadow:
+
+0 0 14px rgba(239,68,68,.8),
+
+inset 0 0 10px rgba(239,68,68,.6);
+
+}
+.save{
+
+color:#10b981;
+
+border:2px solid #10b981;
+
+background:transparent;
+
+box-shadow:
+
+0 0 6px rgba(16,185,129,.4),
+
+inset 0 0 6px rgba(16,185,129,.2);
+
+}
+
+.save:active{
+
+background:#10b981;
+
+border-color:#10b981;
+
+box-shadow:
+
+0 0 14px rgba(16,185,129,.8),
+
+inset 0 0 10px rgba(16,185,129,.6);
+
+}
+.reset{
+
+color:#f59e0b;
+
+border:2px solid #f59e0b;
+
+background:transparent;
+
+box-shadow:
+
+0 0 6px rgba(245,158,11,.4),
+
+inset 0 0 6px rgba(245,158,11,.2);
+
+}
+
+.reset:active{
+
+background:#f59e0b;
+
+border-color:#f59e0b;
+
+box-shadow:
+
+0 0 14px rgba(245,158,11,.8),
+
+inset 0 0 10px rgba(245,158,11,.6);
+
+}
+
+.login{
+
+color:#3b82f6;
+
+border:2px solid #3b82f6;
+
+background:transparent;
+
+box-shadow:
+
+0 0 6px rgba(59,130,246,.4),
+
+inset 0 0 6px rgba(59,130,246,.2);
+
+transition:.15s;
+
+}
+
+/* SAAT DITEKAN */
+
+.login:active{
+
+background:#3b82f6;
+
+color:#020617;
+
+border:2px solid #3b82f6;
+
+box-shadow:
+
+0 0 14px rgba(59,130,246,.8),
+
+inset 0 0 10px rgba(59,130,246,.6);
+
+transform:scale(.96);
+
+}
+
+input{
+width:51%;
+padding:10px;
+margin-top:2px;
+border:none;
+border-radius:12px;
+background:#020617;
+color:white;
+}
+
+.fullBookBtn{
+
+width:70px;
+height:32px;
+
+border-radius:20px;
+
+background:transparent;
+
+border:2px solid #ffffff;
+
+display:flex;
+
+align-items:center;
+justify-content:center;
+
+cursor:pointer;
+
+box-shadow:
+0 0 6px rgba(255,255,255,.6);
+
+transition:.1s;
+
+}
+
+.fullBookBtn:active{
+
+background:#ffffff;
+
+border-color:#ffffff;
+
+box-shadow:
+0 0 10px rgba(255,255,255,.9);
+
+transform:scale(.96);
+
+}
+
+.fullBookBtn:active .fullBookText{
+
+color:#020617;
+
+}
+
+.fullBookBtn.pressed{
+
+background:#ffffff;
+
+border-color:#ffffff;
+
+transform:scale(.94);
+
+}
+
+.fullBookBtn.pressed .fullBookText{
+
+color:#020617;
+
+}
+
+.fullBookText{
+font-size:11px;
+font-weight:bold;
+letter-spacing:1px;
+color:#ffffff;
+transition:.25s;
+}
+
+.toast{
+position:fixed;
+bottom:20px;
+left:50%;
+transform:translateX(-50%);
+background:#1e293b;
+padding:12px 20px;
+border-radius:8px;
+opacity:0;
+transition:.3s;
+}
+
+.toast.show{
+opacity:1;
+}
+
+.logo img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+.miniBookBtn{
+width:80px;
+height:32px;
+font-size:11px;
+border-radius:6px 10px 10px 6px;
+background:transparent;
+border:2px solid #ffffff;
+color:#ffffff;
+letter-spacing:1px;
+cursor:pointer;
+box-shadow:
+0 0 4px rgba(255,255,255,.6),
+0 0 10px rgba(255,255,255,.3);
+transition:.2s;
+}
+
+.miniBookBtn:hover{
+background:#ffffff;
+color:#020617;
+}
+
+.miniBookBtn.active{
+background:#ffffff;
+color:#020617;
+
+}
+
+.backBtn{
+position:absolute;
+bottom:30px;
+left:20%;
+transform:translateX(-50%);
+}
+
+.backBtn:active{
+
+transform:
+
+translateX(-50%)
+
+translateY(4px)
+
+scale(.96);
+
+}
+
+.allAboutPage{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:#020617;
+display:none;
+z-index:9999;
+overflow:hidden;
+animation:fadeInCredits .6s ease;
+}
+
+.allAboutPage::after{
+
+content:"";
+
+position:absolute;
+
+bottom:0;
+
+left:0;
+
+width:100%;
+
+height:120px;
+
+background:
+
+linear-gradient(
+to top,
+#020617,
+transparent
+);
+
+pointer-events:none;
+
+}
+
+.creditsWrapper{
+position:absolute;
+bottom:-100%;
+width:100%;
+text-align:center;
+animation:creditsMove 26s linear forwards;
+}
+
+.creditsText{
+
+font-size:14px;
+
+line-height:28px;
+
+letter-spacing:1.5px;
+
+font-weight:400;
+
+color:#e2e8f0;
+
+text-shadow:
+0 0 4px rgba(255,255,255,.25);
+
+font-family:
+system-ui,
+Segoe UI,
+monospace;
+
+padding:0 30px;
+
+}
+@keyframes creditsMove{
+0%{
+bottom:-100%;
+}
+100%{
+bottom:120%;
+}
+}
+
+.creditsLogo{
+
+width:90px;
+
+opacity:.85;
+
+margin-top:20px;
+
+filter:
+drop-shadow(0 0 8px rgba(255,255,255,.25));
+
+}
+
+.allAboutPage button{
+position:absolute;
+bottom:40px;
+left:50%;
+transform:translateX(-50%);
+width:60%;
+}
+
+.footer{
+text-align:center;
+font-size:11px;
+margin-top:20px;
+margin-bottom:10px;
+opacity:.5;
+letter-spacing:1px;
+color:#ffffff;
+text-shadow:
+0 0 3px rgba(255,255,255,.4);
+}
+
+</style>
+
+</head>
+
+<body class="loginMode">
+<div class="header">
+
+<div class="logo">
+<img
+src="https://i.ibb.co.com/XxqmxRt5/20260419-201815.png"
+draggable="false"
+class="logoImg">
+<div class="logoBlock"></div>
+</div>
+<div class="title" id="mainTitle">
+RUCUP SIGNAL LOGIN
+</div>
+<button id="aboutBtn" class="aboutBtn" onclick="toggleAbout()" style="display:none">
+<span class="bookText">about
+</span>
+</button>
+</div>
+
+</div>
+
+<div class="scanline"></div>
+
+<div id="loginPanel" class="panel">
+ENTER ACCESS KEY
+<input id="key">
+<button class="login" onclick="login()">LOGIN</button>
+</div>
+
+<div id="dashboard" style="display:none">
+<div id="aboutPanel" class="panel" style="display:none">
+
+USER GUIDE SIGNAL ENGINE
+
+<br><br>
+
+1. Tekan GENERATE untuk signal utama
+
+<br><br>
+
+2. Entry sesuai waktu yang muncul
+
+<br><br>
+
+3. Gunakan SYNC jika sudah mendapatkan k1
+
+<br><br>
+
+4. Gunakan money management
+
+<br><br>
+
+ENGINE:
+Matrix Majority 7×7
+VERSION:
+RUCUP SIGNAL v7.7
+<button id="allAboutBtn"
+class="fullBookBtn"
+onclick="openAllAbout()">
+<span class="fullBookText">FULL</span>
+</button>
+</div>
+<div class="panel">
+STATUS : Owner <br>
+MARKET : ETERIUM OTC<br>
+TIMEZONE : WIB <br>
+TIME NOW : <span id="realTime"></span>
+</div>
+
+<div class="panel">
+FINAL SIGNAL
+<div id="signalOutput" class="signalBox">WAITING...</div>
+</div>
+
+<div class="panel">
+<button class="generate" onclick="generateSignal()">GENERATE</button>
+<button class="sync" onclick="syncMatrix()">SYNC</button>
+</div>
+
+<div class="panel">
+TRADING JOURNAL DAILY
+<input id="startBalance" placeholder="Saldo Awal">
+<input id="currentBalance" placeholder="Saldo Sekarang">
+<input id="profit" placeholder="Profit Hari Ini" readonly>
+<input id="trade" placeholder="Total Trade">
+<input id="win" placeholder="Win">
+<input id="loss" placeholder="K1">
+<button class="save" onclick="saveJournal()">SAVE</button>
+<button class="reset" onclick="resetJournal()">RESET</button>
+</div>
+</div>
+<div id="allAboutPage" class="allAboutPage">
+<div class="creditsWrapper">
+<div class="creditsText">
+RUCUP SIGNAL TRADE
+<br><br>
+Developed by
+MRC999 PROJECT
+<br><br>
+Signal Engineer:
+Matrix Majority 7×7
+<br><br>
+Fung :
+Membantu trader membaca arah market
+secara cepat dan disiplin
+<br><br>
+System :
+Manual Decision Support Tool
+<br><br>
+Catatan :
+gunakan money management dan stop sebentar kalau sudah capai target trading harian
+<br><br>
+Version :
+RUCUP SIGNAL v2.1 
+<br><br>
+Contact tele @RMUH9 ig rizall_muh9 wa mrc999s.vercel.app
+<br><br>
+Thanks :)
+#LOVE_PEACE
+#AfterRainTerbitlahSenja
+#MRC999_Project_Trade
+<br><br>
+<img
+src="https://i.ibb.co.com/XxqmxRt5/20260419-201815.png"
+class="creditsLogo">
+<br><br><br>
+© 2026 MRC999 Project
+</div>
+
+</div>
+
+<button id="backCreditsBtn"
+class="fullBookBtn backBtn"
+onclick="closeAllAbout(this)">
+
+<span class="fullBookText">BACK</span>
+
+</button>
+
+</div>
+<div id="toast" class="toast"></div>
+<div class="footer">
+© 2026 MRC999 Project
+</div>
+<script>
+
+document.querySelector(".logo")
+.addEventListener("contextmenu", e => e.preventDefault());
+
+</script>
+<script>
+
+const ACCESS_KEY=""; 
+let lastSignal=null;
+
+/* TOAST UI */
+function showToast(text){
+let t=document.getElementById("toast");
+t.innerText=text;
+t.classList.add("show");
+setTimeout(()=>t.classList.remove("show"),2000);
+}
+
+function login(){
+
+let input=document.getElementById("key").value;
+
+if(input===ACCESS_KEY){
+
+/* kasih delay supaya animasi tombol terlihat */
+
+setTimeout(()=>{
+
+document.getElementById("loginPanel").style.display="none";
+
+document.getElementById("dashboard").style.display="block";
+
+document.getElementById("aboutBtn").style.display="flex";
+
+document.body.classList.remove("loginMode");
+
+document.getElementById("mainTitle").innerText =
+"RUCUP SIGNAL TRADE";
+
+},280); // delay 250ms
+
+}else{
+
+showToast("KEY SALAH!");
+
+}
+
+}
+/* RANDOM */
+function randomBS(){
+return Math.random()<0.5?"B":"S";
+}
+
+/* 7 LOOP */
+function mayoritas7(){
+let B=0,S=0;
+for(let i=0;i<7;i++){
+let h=randomBS();
+if(h==="B")B++; else S++;
+}
+return B>S?"B":"S";
+}
+
+/* FINAL MATRIX */
+function finalMatrix(){
+let hasil=[];
+for(let i=0;i<7;i++){
+hasil.push(mayoritas7());
+}
+let totalB=hasil.filter(x=>x==="B").length;
+let totalS=hasil.filter(x=>x==="S").length;
+return totalB>totalS?"B":"S";
+}
+
+function updateClock(){
+
+let now=new Date();
+
+let jam=now.toLocaleTimeString("id-ID",{
+
+hour:"2-digit",
+
+minute:"2-digit",
+
+second:"2-digit"
+
+});
+
+document.getElementById("realTime").innerText=jam;
+
+}
+
+setInterval(updateClock,1000);
+
+updateClock();
+
+let waitingInterval;
+
+function startWaitingAnimation(){
+
+let dots = 0;
+
+waitingInterval = setInterval(()=>{
+
+dots = (dots + 1) % 4;
+
+let titik = ".".repeat(dots);
+
+document.getElementById("signalOutput").innerText =
+"WAITING" + titik;
+
+},500);
+
+}
+
+function stopWaitingAnimation(){
+
+clearInterval(waitingInterval);
+
+}
+
+/* ROUND TIME */
+function roundTime(){
+let now=new Date();
+let menit=now.getMinutes();
+let add=5-(menit%5);
+if(add===5)add=0;
+now.setMinutes(menit+add);
+now.setSeconds(0);
+return now.toTimeString().slice(0,5);
+}
+
+/* SHOW SIGNAL */
+function showSignal(signal){
+stopWaitingAnimation();
+let jam = roundTime();
+let warna = signal==="B"?"buy":"sell";
+document.getElementById("signalOutput").innerHTML =
+"<span class='"+warna+"'>"+jam+" "+signal+"</span>";
+}
+
+/* GENERATE */
+function generateSignal(){
+let signal=finalMatrix();
+lastSignal=signal;
+showSignal(signal);
+}
+
+/* SYNC */
+function syncMatrix(){
+
+if(lastSignal===null){
+showToast("Generate dulu");
+return;
+}
+
+let target=lastSignal==="B"?"S":"B";
+let ketemu=0;
+
+while(true){
+let scan=randomBS();
+
+if(scan===target){
+ketemu++;
+}
+
+if(ketemu===3){ // sesuai logic baru lo
+let next=randomBS();
+lastSignal=next;
+showSignal(next);
+return;
+}
+}
+
+}
+
+/* AUTO PROFIT CALCULATOR */
+function hitungProfit(){
+let start = Number(startBalance.value) || 0;
+let current = Number(currentBalance.value) || 0;
+profit.value = current - start;
+}
+
+/* AUTO UPDATE SAAT DIKETIK */
+startBalance.addEventListener("input", hitungProfit);
+currentBalance.addEventListener("input", hitungProfit);
+
+/* SAVE DATA */
+function saveJournal(){
+localStorage.setItem("startBalance", startBalance.value);
+localStorage.setItem("currentBalance", currentBalance.value);
+localStorage.setItem("profit", profit.value);
+localStorage.setItem("trade", trade.value);
+localStorage.setItem("win", win.value);
+localStorage.setItem("loss", loss.value);
+showToast("Journal Saved");
+}
+
+/* LOAD DATA */
+function loadJournal(){
+startBalance.value = localStorage.getItem("startBalance") || "";
+currentBalance.value = localStorage.getItem("currentBalance") || "";
+profit.value = localStorage.getItem("profit") || "";
+trade.value = localStorage.getItem("trade") || "";
+win.value = localStorage.getItem("win") || "";
+loss.value = localStorage.getItem("loss") || "";
+}
+
+/* RESET DATA */
+function resetJournal(){
+localStorage.clear();
+loadJournal();
+showToast("Journal Reset");
+}
+
+function openAllAbout(){
+
+let page=document.getElementById("allAboutPage");
+
+let btn=document.getElementById("allAboutBtn");
+
+/* aktifkan animasi tombol dulu */
+
+btn.classList.add("pressed");
+
+/* delay supaya animasi terlihat */
+
+setTimeout(()=>{
+
+history.pushState({credits:true},"");
+
+document.body.classList.add("lockScroll");
+
+document.documentElement.classList.add("lockScroll");
+
+page.style.display="block";
+
+let credits=document.querySelector(".creditsWrapper");
+
+credits.style.animation="none";
+
+void credits.offsetWidth;
+
+credits.style.animation="creditsMove 18s linear forwards";
+
+/* reset tombol */
+
+btn.classList.remove("pressed");
+
+},260);
+
+}
+
+function closeAllAbout(btn){
+
+btn.classList.add("pressed");
+
+setTimeout(()=>{
+
+document.getElementById("allAboutPage").style.display="none";
+
+btn.classList.remove("pressed");
+
+document.body.classList.remove("lockScroll");
+
+document.documentElement.classList.remove("lockScroll");
+
+history.back();
+
+},260);
+
+}
+
+function toggleAbout(){
+
+let panel=document.getElementById("aboutPanel");
+let btn=document.getElementById("aboutBtn");
+
+let isOpen = panel.style.display === "block";
+document.getElementById("allAboutBtn")
+.classList.toggle("active",!isOpen);
+if(!isOpen){
+
+panel.style.display="block";
+btn.classList.add("active");
+
+history.pushState({about:true},"");
+
+}else{
+
+panel.style.display="none";
+btn.classList.remove("active");
+
+}
+
+}
+
+window.onpopstate=function(){
+
+let credits=document.getElementById("allAboutPage");
+
+if(credits.style.display==="block"){
+
+credits.style.display="none";
+
+document.body.classList.remove("lockScroll");
+document.documentElement.classList.remove("lockScroll");
+
+document
+.getElementById("allAboutBtn")
+.classList.remove("active");
+
+return;
+
+}
+
+let panel=document.getElementById("aboutPanel");
+
+let btn=document.getElementById("aboutBtn");
+
+if(panel.style.display==="block"){
+
+panel.style.display="none";
+
+btn.classList.remove("active");
+
+}
+
+};
+
+loadJournal();
+hitungProfit();
+startWaitingAnimation();
+
+</script>
+
+</body>
+</html>
