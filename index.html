@@ -546,6 +546,27 @@ box-shadow:
 inset 0 0 10px rgba(34,197,94,.6);
 
 }
+.generate.loading{
+background:#22c55e;
+color:#020617;
+pointer-events:none;
+opacity:.7;
+position:relative;
+}
+
+.generate.loading::after{
+content:" Loding";
+animation:generateDots 1s infinite;
+}
+
+@keyframes generateDots{
+
+0%{content:" Loding";}
+33%{content:" Loding.";}
+66%{content:" Loding..";}
+100%{content:" Loding...";}
+
+}
 .sync{
 
 color:#ef4444;
@@ -559,6 +580,37 @@ box-shadow:
 0 0 6px rgba(239,68,68,.4),
 
 inset 0 0 6px rgba(239,68,68,.2);
+
+}
+
+.sync.loading{
+
+background:#ef4444;
+
+color:#020617;
+
+pointer-events:none;
+
+opacity:.7;
+
+position:relative;
+
+}
+
+.sync.loading::after{
+
+content:" SYNCING";
+
+animation:syncDots 1s infinite;
+
+}
+
+@keyframes syncDots{
+
+0%{content:" Loding";}
+33%{content:" Loding.";}
+66%{content:" Loding..";}
+100%{content:" Loding...";}
 
 }
 
@@ -998,7 +1050,7 @@ onclick="openAllAbout()">
 </div>
 <div class="panel">
 STATUS : Owner <br>
-MARKET : ETERIUM OTC<br>
+MARKET : MENYESUAIKAN<br>
 TIMEZONE : WIB <br>
 TIME NOW : <span id="realTime"></span>
 </div>
@@ -1007,10 +1059,15 @@ TIME NOW : <span id="realTime"></span>
 FINAL SIGNAL
 <div id="signalOutput" class="signalBox">WAITING...</div>
 </div>
-
 <div class="panel">
-<button class="generate" onclick="generateSignal()">GENERATE</button>
-<button class="sync" onclick="syncMatrix()">SYNC</button>
+POSISI NAIK TURUN
+<br>
+<input id="scanCount" type="number" value="49">
+<button class="save" onclick="saveScanSetting()">SAVE SCAN</button>
+</div>
+<div class="panel">
+<button class="generate" onclick="generateSignal()">BUY</button>
+<button class="sync" onclick="syncMatrix()">SELL</button>
 </div>
 
 <div class="panel">
@@ -1088,8 +1145,7 @@ document.querySelector(".logo")
 
 const ACCESS_KEY="BE9"; 
 let lastSignal=null;
-
-/* TOAST UI */
+let scanTarget=49;
 function showToast(text){
 let t=document.getElementById("toast");
 t.innerText=text;
@@ -1098,109 +1154,91 @@ setTimeout(()=>t.classList.remove("show"),2000);
 }
 
 function login(){
-
 let input=document.getElementById("key").value;
-
 if(input===ACCESS_KEY){
-
-/* kasih delay supaya animasi tombol terlihat */
-
 setTimeout(()=>{
-
 document.getElementById("loginPanel").style.display="none";
-
 document.getElementById("dashboard").style.display="block";
-
 document.getElementById("aboutBtn").style.display="flex";
-
 document.body.classList.remove("loginMode");
-
 document.getElementById("mainTitle").innerText =
 "RUCUP SIGNAL TRADE";
-
 },280); // delay 250ms
-
 }else{
-
 showToast("KEY SALAH!");
-
 }
-
 }
-/* RANDOM */
 function randomBS(){
 return Math.random()<0.5?"B":"S";
 }
 
-/* 7 LOOP */
-function mayoritas7(){
+function minority7(){
 let B=0,S=0;
 for(let i=0;i<7;i++){
 let h=randomBS();
-if(h==="B")B++; else S++;
+if(h==="B") B++;
+else S++;
 }
-return B>S?"B":"S";
+return B<S ? "B" : "S";
 }
 
-/* FINAL MATRIX */
+function loadScanSetting(){
+let saved = localStorage.getItem("scanTarget");
+if(saved){
+scanTarget = Number(saved);
+document.getElementById("scanCount").value = scanTarget;
+}
+
+}
+
+function saveScanSetting(){
+let val = Number(document.getElementById("scanCount").value);
+if(val<1){
+showToast("Minimal 1");
+return;
+}
+scanTarget = val;
+localStorage.setItem("scanTarget",scanTarget);
+showToast("Scan set ke "+scanTarget);
+}
+
 function finalMatrix(){
 let hasil=[];
 for(let i=0;i<7;i++){
-hasil.push(mayoritas7());
+hasil.push(minority7());
 }
 let totalB=hasil.filter(x=>x==="B").length;
 let totalS=hasil.filter(x=>x==="S").length;
-return totalB>totalS?"B":"S";
+return totalB>totalS ? "B" : "S";
 }
 
 function updateClock(){
-
 let now=new Date();
-
 let jam=now.toLocaleTimeString("id-ID",{
-
 hour:"2-digit",
-
 minute:"2-digit",
-
 second:"2-digit"
-
 });
-
 document.getElementById("realTime").innerText=jam;
-
 }
 
 setInterval(updateClock,1000);
-
 updateClock();
-
 let waitingInterval;
-
 function startWaitingAnimation(){
-
 let dots = 0;
-
 waitingInterval = setInterval(()=>{
-
 dots = (dots + 1) % 4;
-
 let titik = ".".repeat(dots);
-
 document.getElementById("signalOutput").innerText =
 "WAITING" + titik;
-
 },500);
-
 }
 
 function stopWaitingAnimation(){
-
 clearInterval(waitingInterval);
-
 }
 
-/* ROUND TIME */
 function roundTime(){
 let now=new Date();
 let menit=now.getMinutes();
@@ -1211,7 +1249,6 @@ now.setSeconds(0);
 return now.toTimeString().slice(0,5);
 }
 
-/* SHOW SIGNAL */
 function showSignal(signal){
 stopWaitingAnimation();
 let jam = roundTime();
@@ -1220,53 +1257,121 @@ document.getElementById("signalOutput").innerHTML =
 "<span class='"+warna+"'>"+jam+" "+signal+"</span>";
 }
 
-/* GENERATE */
-function generateSignal(){
-let signal=finalMatrix();
-lastSignal=signal;
-showSignal(signal);
-}
+async function generateSignal(){
 
-/* SYNC */
-function syncMatrix(){
+let btn = document.querySelector(".generate");
 
-if(lastSignal===null){
-showToast("Generate dulu");
-return;
-}
+if(btn.classList.contains("loading")) return;
 
-let target=lastSignal==="B"?"S":"B";
-let ketemu=0;
+btn.classList.add("loading");
 
-while(true){
-let scan=randomBS();
+/* kalau belum ada signal sebelumnya → paksa B */
+
+let target = lastSignal === null ? "B" : finalMatrix();
+
+let ketemu = 0;
+
+let batchSize = 5000;
+
+if(scanTarget > 100000) batchSize = 20000;
+if(scanTarget > 1000000) batchSize = 100000;
+
+while(ketemu < scanTarget){
+
+for(let i=0;i<batchSize;i++){
+
+let scan = finalMatrix();
 
 if(scan===target){
+
 ketemu++;
-}
 
-if(ketemu===3){ // sesuai logic baru lo
-let next=randomBS();
-lastSignal=next;
-showSignal(next);
+if(ketemu>=scanTarget){
+
+lastSignal = target;
+
+showSignal(lastSignal);
+
+btn.classList.remove("loading");
+
 return;
+
 }
+
 }
 
 }
 
-/* AUTO PROFIT CALCULATOR */
+await new Promise(r=>setTimeout(r,0));
+
+}
+
+btn.classList.remove("loading");
+
+}
+
+async function syncMatrix(){
+
+let btn = document.querySelector(".sync");
+
+if(btn.classList.contains("loading")) return;
+
+btn.classList.add("loading");
+
+/* kalau belum ada signal sebelumnya → paksa S */
+
+let target = lastSignal === null ? "S" : finalMatrix();
+
+let ketemu = 0;
+
+let batchSize = 5000;
+
+if(scanTarget > 100000) batchSize = 20000;
+if(scanTarget > 1000000) batchSize = 100000;
+
+while(ketemu < scanTarget){
+
+for(let i=0;i<batchSize;i++){
+
+let scan = finalMatrix();
+
+if(scan===target){
+
+ketemu++;
+
+if(ketemu>=scanTarget){
+
+lastSignal = target;
+
+showSignal(lastSignal);
+
+btn.classList.remove("loading");
+
+return;
+
+}
+
+}
+
+}
+
+await new Promise(r=>setTimeout(r,0));
+
+}
+
+btn.classList.remove("loading");
+
+}
+
 function hitungProfit(){
 let start = Number(startBalance.value) || 0;
 let current = Number(currentBalance.value) || 0;
 profit.value = current - start;
 }
 
-/* AUTO UPDATE SAAT DIKETIK */
 startBalance.addEventListener("input", hitungProfit);
 currentBalance.addEventListener("input", hitungProfit);
 
-/* SAVE DATA */
 function saveJournal(){
 localStorage.setItem("startBalance", startBalance.value);
 localStorage.setItem("currentBalance", currentBalance.value);
@@ -1276,8 +1381,6 @@ localStorage.setItem("win", win.value);
 localStorage.setItem("loss", loss.value);
 showToast("Journal Saved");
 }
-
-/* LOAD DATA */
 function loadJournal(){
 startBalance.value = localStorage.getItem("startBalance") || "";
 currentBalance.value = localStorage.getItem("currentBalance") || "";
@@ -1286,8 +1389,6 @@ trade.value = localStorage.getItem("trade") || "";
 win.value = localStorage.getItem("win") || "";
 loss.value = localStorage.getItem("loss") || "";
 }
-
-/* RESET DATA */
 function resetJournal(){
 localStorage.clear();
 loadJournal();
@@ -1295,114 +1396,63 @@ showToast("Journal Reset");
 }
 
 function openAllAbout(){
-
 let page=document.getElementById("allAboutPage");
-
 let btn=document.getElementById("allAboutBtn");
-
-/* aktifkan animasi tombol dulu */
-
 btn.classList.add("pressed");
-
-/* delay supaya animasi terlihat */
-
 setTimeout(()=>{
-
 history.pushState({credits:true},"");
-
 document.body.classList.add("lockScroll");
-
 document.documentElement.classList.add("lockScroll");
-
 page.style.display="block";
-
 let credits=document.querySelector(".creditsWrapper");
-
 credits.style.animation="none";
-
 void credits.offsetWidth;
-
 credits.style.animation="creditsMove 18s linear forwards";
-
-/* reset tombol */
-
 btn.classList.remove("pressed");
-
 },260);
-
 }
 
 function closeAllAbout(btn){
-
 btn.classList.add("pressed");
-
 setTimeout(()=>{
-
 document.getElementById("allAboutPage").style.display="none";
-
 btn.classList.remove("pressed");
-
 document.body.classList.remove("lockScroll");
-
 document.documentElement.classList.remove("lockScroll");
-
 history.back();
-
 },260);
-
 }
 
 function toggleAbout(){
-
 let panel=document.getElementById("aboutPanel");
 let btn=document.getElementById("aboutBtn");
-
 let isOpen = panel.style.display === "block";
 document.getElementById("allAboutBtn")
 .classList.toggle("active",!isOpen);
 if(!isOpen){
-
 panel.style.display="block";
 btn.classList.add("active");
-
 history.pushState({about:true},"");
-
 }else{
-
 panel.style.display="none";
 btn.classList.remove("active");
-
 }
-
 }
-
 window.onpopstate=function(){
-
 let credits=document.getElementById("allAboutPage");
-
 if(credits.style.display==="block"){
-
 credits.style.display="none";
-
 document.body.classList.remove("lockScroll");
 document.documentElement.classList.remove("lockScroll");
-
 document
 .getElementById("allAboutBtn")
 .classList.remove("active");
-
 return;
-
 }
-
 let panel=document.getElementById("aboutPanel");
-
 let btn=document.getElementById("aboutBtn");
-
 if(panel.style.display==="block"){
-
 panel.style.display="none";
-
 btn.classList.remove("active");
 
 }
@@ -1410,6 +1460,7 @@ btn.classList.remove("active");
 };
 
 loadJournal();
+loadScanSetting();
 hitungProfit();
 startWaitingAnimation();
 
